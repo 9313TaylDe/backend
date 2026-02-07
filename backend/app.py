@@ -1,5 +1,10 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+import cors from "cors";
+app.use(cors({
+  origin: "https://meu-portifolio-six-iota.vercel.app",
+  credentials: true,
+}));
 
 app = Flask(__name__)
 CORS(app)
@@ -41,3 +46,4 @@ def New():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
+
