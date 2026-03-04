@@ -1,7 +1,10 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import os
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8f43412cf68f707da89832ecffc78970a9f2b9ea
 app = Flask(__name__)
 CORS(app)
 
@@ -30,6 +33,7 @@ def Login():
     for user in adm_login + users_login:
         if user["email"] == email and user["senha"] == senha:
             return jsonify({
+<<<<<<< HEAD
                 "success": True,
                 "nome": user["nome"],
                 "email": user["email"]
@@ -41,6 +45,14 @@ def Login():
     })
 
 
+=======
+    "success": True,
+    "nome": nome,
+    "email": email
+})
+    return jsonify({"success":False, "message":"E-mail ou senha inválidos"})
+        
+>>>>>>> 8f43412cf68f707da89832ecffc78970a9f2b9ea
 @app.route("/new", methods=["POST"])
 def New():
     dados = request.json
@@ -63,6 +75,7 @@ def New():
     }
 
     users_login.append(nova_conta)
+<<<<<<< HEAD
 
     return jsonify({
         "success": True,
@@ -74,3 +87,15 @@ def New():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
+=======
+    return jsonify({
+    "success": True,
+    "nome": nome,
+    "email": email
+})
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
+>>>>>>> 8f43412cf68f707da89832ecffc78970a9f2b9ea
