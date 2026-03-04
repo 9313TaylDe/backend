@@ -1,71 +1,76 @@
-from flask import Flask, request, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
+import os
 
 app = Flask(__name__)
 CORS(app)
 
-users_credentials = [
+adm_login = [
     {
-        "email": "teste@gmail.com",
+        "email": "expeditotaylor@gmailcom",
         "senha": "1234",
-        "nome": "joao"
-    }
-]
-# 
-adm_credentials = [
-    {
-        "email": "admin@gmail.com",
-        "senha": "1234",
-        "nome":"Expedito"
-      
+        "nome": "expedito"
     }
 ]
 
+users_login = []
+
+
+@app.route("/")
+def home():
+    return jsonify({"message": "Backend ativo!"})
+
+
 @app.route("/login", methods=["POST"])
-def login():
+def Login():
     dados = request.json
     email = dados.get("email")
     senha = dados.get("senha")
 
-    for user in adm_credentials + users_credentials:
-        if user["email"].lower() == email.lower() and user["senha"] == senha:
+    for user in adm_login + users_login:
+        if user["email"] == email and user["senha"] == senha:
             return jsonify({
                 "success": True,
-                "nome": user["nome"],   # 👈 vem do backend
+                "nome": user["nome"],
                 "email": user["email"]
             })
 
     return jsonify({
         "success": False,
-        "message": "Usuário ou senha inválidos"
-    }), 401
-
-@app.route("/new", methods=["POST"])
-def New_Account():
-    dados = request.json
-
-    nome = dados.get("nome")
-    email = dados.get("email")
-    senha = dados.get("senha")
-
-    for user in users_credentials:
-        if email == user["email"]:
-            return jsonify({"success": False, "message": "Conta já cadastrada"})
-
-    users_credentials.append({
-        "nome": nome,
-        "email": email,
-        "senha": senha
+        "message": "E-mail ou senha inválidos"
     })
 
-    return jsonify({"success": True})
 
+@app.route("/new", methods=["POST"])
+def New():
+    dados = request.json
+    email = dados.get("email")
+    senha = dados.get("senha")
+    nome = dados.get("nome")
 
-@app.route("/logout", methods=["POST"])
-def Logout():
-    return jsonify({"success": True})
+    # verifica se já existe
+    for user in adm_login + users_login:
+        if user["email"] == email:
+            return jsonify({
+                "success": False,
+                "message": "E-mail já cadastrado"
+            }), 400
+
+    nova_conta = {
+        "email": email,
+        "senha": senha,
+        "nome": nome
+    }
+
+    users_login.append(nova_conta)
+
+    return jsonify({
+        "success": True,
+        "nome": nome,
+        "email": email
+    })
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
-
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
