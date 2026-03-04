@@ -1,63 +1,26 @@
-from flask import Flask, jsonify, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS
-import os
 
 app = Flask(__name__)
 
-CORS(app, resources={
-    r"/*": {
-        "origins": "https://meu-portifolio-six-iota.vercel.app"
-    }
-})
+# Permitir CORS para seu frontend rodando em Vercel
+CORS(app, origins=["https://meu-portifolio-six-iota.vercel.app"])
 
-adm_login = [
-    {"email": "expeditotaylor@gmailcom", 
-     "senha":"1234",
-     "nome":"expedito"}
-]
+@app.route('/')
+def home():
+    return jsonify({ "message": "Backend ativo!" })
 
-users_login = []
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    email = data.get("email")
+    password = data.get("password")
 
-@app.route("/login", methods=["POST"])
-def Login():
-    dados = request.json
-    email = dados.get("email")
-    senha = dados.get("senha")
-    
-    for user in adm_login + users_login:
-        if user["email"] == email and user["senha"] == senha:
-            return jsonify({
-                "success": True,
-                "nome": user["nome"],
-                "email": user["email"]
-            })
-            
-    return jsonify({
-        "success": False,
-        "message": "E-mail ou senha inválidos"
-    })
-
-@app.route("/new", methods=["POST"])
-def New():
-    dados = request.json
-    email = dados.get("email")
-    senha = dados.get("senha")
-    nome = dados.get("nome")
-
-    nova_conta = {
-        "email": email,
-        "senha": senha,
-        "nome": nome
-    }
-
-    users_login.append(nova_conta)
-
-    return jsonify({
-        "success": True,
-        "nome": nome,
-        "email": email
-    })
+    # Aqui você pode verificar usuário/senha
+    if email == "teste" and password == "1234":
+        return jsonify({"success": True, "message": "Logado com sucesso"})
+    else:
+        return jsonify({"success": False, "message": "Credenciais inválidas"}), 401
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
